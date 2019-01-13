@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Created by .ignore support plugin (hsz.mobi)
 ### Example user template template
 ### Example user template
@@ -7,6 +8,8 @@
 *.iml
 out
 gen### Java template
+=======
+>>>>>>> 68847bd5f1218079beab12eea0a89001e6707934
 # Compiled class file
 *.class
 
