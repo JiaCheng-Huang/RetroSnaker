@@ -1,6 +1,5 @@
 package hjc.snake;
 
-import java.awt.*;
 import java.util.Queue;
 
 import static hjc.snake.GameSystem.score;
@@ -14,26 +13,26 @@ import static hjc.snake.GameSystem.step;
  */
 public class Snake implements Subject {
     private Direction direction;
-    private Point head;
-    private Queue<Point> body;
+    private Coordinate head;
+    private Queue<Coordinate> body;
     private Observer observer;
 
-    public Snake(Direction direction, Point head, Queue<Point> body) {
+    public Snake(Direction direction, Coordinate head, Queue<Coordinate> body) {
         this.direction = direction;
         this.head = head;
         this.body = body;
     }
 
-    public Point getHead() {
+    public Coordinate getHead() {
         return head;
     }
 
 
-    public Queue<Point> getBody() {
+    public Queue<Coordinate> getBody() {
         return body;
     }
 
-    public void changeDirection(Direction direction) {
+    public void changeDirectionOrSpeedUp(Direction direction) {
         // 每一次UI刷新只能转向一次
         if (GameSystem.changeDirect) {
             return;
@@ -89,23 +88,24 @@ public class Snake implements Subject {
     }
 
     public void embark() {
-        Point nextPosition = null;
+        Coordinate nextPosition = null;
         switch (direction) {
             case UP:
-                nextPosition = new Point((int) head.getX(), (int) head.getY() - step);
+                nextPosition = new Coordinate(head.getX(), head.getY() - step);
                 break;
             case DOWN:
-                nextPosition = new Point((int) head.getX(), (int) head.getY() + step);
+                nextPosition = new Coordinate(head.getX(), head.getY() + step);
                 break;
             case LEFT:
-                nextPosition = new Point((int) head.getX() - step, (int) head.getY());
+                nextPosition = new Coordinate(head.getX() - step, head.getY());
                 break;
             case RIGHT:
-                nextPosition = new Point((int) head.getX() + step, (int) head.getY());
+                nextPosition = new Coordinate(head.getX() + step, head.getY());
                 break;
         }
-        if (nextPosition.x < 0 || nextPosition.y < 0 || nextPosition.x > GameSystem.bound || nextPosition.y > GameSystem.bound) {
-            GameSystem.exit();
+        if (nextPosition.getX() < 0 || nextPosition.getY() < 0 || nextPosition.getX() > GameSystem.bound || nextPosition.getY() > GameSystem.bound) {
+            Main.exit();
+            return;
         }
         if (nextPosition.equals(Food.position)) {
             eat(nextPosition);
@@ -114,19 +114,19 @@ public class Snake implements Subject {
         move(nextPosition);
     }
 
-    private void move(Point nextPosition) {
+    private void move(Coordinate nextPosition) {
         body.add(head);
         head = nextPosition;
         body.remove();
-        for (Point point : body) {
-            if (head.x == point.x && head.y == point.y) {
-                GameSystem.exit();
+        for (Coordinate point : body) {
+            if (head.getX().equals(point.getX()) && head.getY().equals(point.getY())) {
+                Main.exit();
             }
         }
         this.notifyObservers();
     }
 
-    private void eat(Point nextPosition) {
+    private void eat(Coordinate nextPosition) {
         Food.generate(head, body);
         body.add(head);
         head = nextPosition;
